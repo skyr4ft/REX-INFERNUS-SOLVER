@@ -2,14 +2,15 @@
 
 import { useMemo, useState } from "react";
 
-const temples = [
-  { value: "Veytharion", label: "维萨里昂" },
-  { value: "Caltheris", label: "卡瑟莉斯" },
-  { value: "Dravakar", label: "德拉瓦卡" },
+const targets = [
+  { value: "House", label: "女儿之家" },
   { value: "Nyxara", label: "奈厄拉" },
+  { value: "Veytharion", label: "维萨里昂" },
+  { value: "Dravakar", label: "德拉瓦卡" },
+  { value: "Caltheris", label: "卡瑟莉斯" },
 ] as const;
 const positions = ["女儿之家", "奈厄拉", "维萨里昂", "空位", "德拉瓦卡", "卡瑟莉斯"];
-const templePosition: Record<string, number> = { Nyxara: 1, Veytharion: 2, Dravakar: 4, Caltheris: 5 };
+const targetPosition: Record<string, number> = { House: 0, Nyxara: 1, Veytharion: 2, Dravakar: 4, Caltheris: 5 };
 const pillarRiddles = [
   { quote: "我飘向记得诸月的群星，它们是借取了浩瀚星河之力的漫游者。", turns: [1, 2, 2] },
   { quote: "我记得飘向诸月的浩瀚星河，它们是借取了群星之力的漫游行者。", turns: [2, 0, 2] },
@@ -51,10 +52,10 @@ export default function Home() {
   const [activeSheet, setActiveSheet] = useState<"crank" | "pillar">("pillar");
   const [direction, setDirection] = useState("ccw");
   const [starts, setStarts] = useState([0, 0, 0]);
-  const [target, setTarget] = useState<string>(temples[0].value);
+  const [target, setTarget] = useState<string>("Veytharion");
   const [result, setResult] = useState<number[] | null | undefined>();
   const [selectedRiddle, setSelectedRiddle] = useState(0);
-  const targetIndex = useMemo(() => templePosition[target], [target]);
+  const targetIndex = useMemo(() => targetPosition[target], [target]);
 
   function updateStart(index: number, value: number) {
     setStarts((current) => current.map((item, i) => (i === index ? value : item)));
@@ -71,7 +72,7 @@ export default function Home() {
         <header className="rex-hud-header">
           <div className="rex-hud-kicker"><span></span> 炼狱王庭 <span></span></div>
           <h1>{activeSheet === "crank" ? "转盘求解器" : "石柱逃课"}</h1>
-          <p>{activeSheet === "crank" ? "输入三个转盘的当前位置，快速计算对准目标神殿所需的最少转动次数。" : "选择游戏中出现的谜语，按结果转动左、中、右石柱对应的把手，最后转动「锁定」把手。"}</p>
+          <p>{activeSheet === "crank" ? "输入三个转盘的当前位置，快速计算对准目标位置所需的最少转动次数。" : "选择游戏中出现的谜语，按结果转动左、中、右石柱对应的把手，最后转动「锁定」把手。"}</p>
         </header>
         {activeSheet === "crank" ? <>
         <div className="rex-crank-viz-wrap" aria-hidden="true">
@@ -98,9 +99,9 @@ export default function Home() {
               </select>
             </div>
             <div className="rex-crank-group">
-              <label className="rex-crank-group-title" htmlFor="target">目标神殿</label>
+              <label className="rex-crank-group-title" htmlFor="target">目标位置</label>
               <select id="target" className="rex-crank-select full" value={target} onChange={(event) => { setTarget(event.target.value); setResult(undefined); }}>
-                {temples.map((temple) => <option value={temple.value} key={temple.value}>{temple.label}</option>)}
+                {targets.map((targetOption) => <option value={targetOption.value} key={targetOption.value}>{targetOption.label}</option>)}
               </select>
             </div>
           </div>
@@ -172,7 +173,7 @@ export default function Home() {
             src="./rex-family.webp"
             width="1400"
             height="788"
-            alt="炼狱王庭的两位角色合影"
+            alt="以太之女"
             decoding="async"
           />
           <span>Thank You Dark Aether Saga</span>
